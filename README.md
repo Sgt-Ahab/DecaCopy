@@ -71,5 +71,16 @@ See the `LICENSE` file for full details.
 
 ### Notes
 
-PowerSave provides brief confirmation feedback by design.
-Native paste may exhibit a slight delay, as it is being intercepted by design.
+**DecaCopy operates on text clipboard content only.**
+
+*Run a single instance of DecaCopy at a time.*
+
+**PowerSave** provides brief confirmation feedback by design.
+  Native paste may exhibit a slight delay, as it is intercepted intentionally.
+
+**Slot capacity:** Each slot holds whatever the *Windows* clipboard can hold at runtime. Capacity is limited by available system memory.
+
+**Slot 0:** In rare cases, slot 0 may conflict with native paste timing depending on the active application. 
+  If issues occur, use slots 1–9 for critical workflows.
+
+**Clipboard Restrictions: Some applications restrict clipboard access or simulated input; behavior may vary.**
