@@ -2,7 +2,7 @@
 
 DecaCopy is a lightweight Windows utility that provides **10 ephemeral clipboard registers (0–9)** alongside the native clipboard.
 
-All data exists **only in memory** for the lifetime of the program.  
+All data exists **only in memory** for the lifetime of the program.<br>  
 No disk writes. No persistence. No telemetry.
 
 ---
@@ -39,23 +39,18 @@ No disk writes. No persistence. No telemetry.
 
 ---
 
-## Checksums (Release Build)
+## Install
 
-For users downloading the compiled executable, the SHA-256 checksum is provided
-to verify file integrity.
+### Requirements
 
-Example:
+DecaCopy requires AutoHotkey v2 (64-bit).<br>
+Download: [AHK2](https://www.autohotkey.com/v2/)
 
-DecaCopy.exe
-SHA256 - **7BF19370F442079E06D0ED7543BB66A500722CA56ED609D97B6BEF9825B584AE**
+### Usage
 
+Download `DecaCopy.ahk` and run it with AutoHotkey.
 
-You can verify the checksum on Windows with:
-
-```powershell
-Get-FileHash DecaCopy.exe -Algorithm SHA256
-```
-The hash must match exactly.
+---
 
 ## License
 
@@ -76,11 +71,11 @@ See the `LICENSE` file for full details.
 *Run a single instance of DecaCopy at a time.*
 
 **PowerSave** provides brief confirmation feedback by design.
-  Native paste may exhibit a slight delay, as it is intercepted intentionally.
+Native paste may exhibit a slight delay, as it is intercepted intentionally.
 
 **Slot capacity:** Each slot holds whatever the *Windows* clipboard can hold at runtime. Capacity is limited by available system memory.
 
 **Slot 0:** In rare cases, slot 0 may conflict with native paste timing depending on the active application. 
-  If issues occur, use slots 1–9 for critical workflows.
+            If issues occur, use slots 1–9 for critical workflows.
 
 **Clipboard Restrictions: Some applications restrict clipboard access or simulated input; behavior may vary.**
