@@ -1,4 +1,4 @@
-; DecaCopy v1.0.0
+; DecaCopy v1.1.0
 ; 10 ephemeral clipboard registers (0–9) + native clipboard
 ; MenuSave warns on overwrite; PowerSave does not.
 ; No disk writes. No persistence. No telemetry.
@@ -33,9 +33,6 @@ A_TrayMenu.Add("Exit", (*) => ExitApp())
 ^+9::PowerSave(9)
 
 ^v::PowerPaste()
-
-
-
 
 PowerSave(slot) {
     global slots
@@ -95,8 +92,6 @@ MenuSaveHandler(ItemName, *) {
     PowerSave(slot)
 }
 
-
-
 MenuPaste() {
     global slots, pasteMenu, menuSlotMap
 
@@ -116,7 +111,6 @@ MenuPaste() {
 
     pasteMenu.Show()
 }
-
 
 MenuPasteHandler(ItemName, *) {
     global menuSlotMap
@@ -143,31 +137,47 @@ PowerPaste() {
 
     if isPasting
         return
+
     isPasting := true
+    try {
+        ; Capture ONE key after Ctrl+V:
+        ; - If it's a digit 0-9: paste slot and do NOT let the digit type into the app.
+        ; - If it's anything else: fall through to native paste AND re-send that key.
+        ; - If no key pressed in time: native paste.
+        ih := InputHook("L1 T0.45")
+        ih.KeyOpt("{All}", "S")  ; Suppress captured key so we can decide what to do with it
+        ih.Start()
+        ih.Wait()
 
-    ih := InputHook("L1 T0.45")
-    ih.Start()
-    ih.Wait()
+        key := ih.Input  ; "" on timeout
 
-    if ih.EndReason = "Max" {
-        key := ih.Input
-        if (key >= "0" && key <= "9") {
-            slot := Integer(key)  ; convert string -> number (Map keys)
+        if (key != "" && key ~= "^[0-9]$") {
+            slot := Integer(key)
             if slots.Has(slot) && slots[slot] != "" {
                 PasteSlot(slot)
-                isPasting := false
-                return
+            } else {
+                ; Slot empty -> behave like normal paste
+                NativePaste()
             }
+            return
         }
-    }
 
-    NativePaste()
-    isPasting := false
+        ; No digit chosen (timeout OR non-digit):
+        NativePaste()
+
+        ; If user hit a non-digit key during the selection window, replay it after pasting.
+        ; This prevents DecaCopy from "eating" the user's next keystroke.
+        if (key != "") {
+            Send "{Blind}" key
+        }
+    } finally {
+        isPasting := false
+    }
 }
 
 NativePaste() {
-    ; Temporarily disable our Ctrl+V hook
+    ; Temporarily disable our Ctrl+V hook to prevent recursion
     Hotkey "^v", "Off"
-    Send "^v"
+    Send "{Blind}^v"
     Hotkey "^v", "On"
 }
